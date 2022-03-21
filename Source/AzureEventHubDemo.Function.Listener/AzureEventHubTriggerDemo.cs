@@ -4,13 +4,12 @@
 
 namespace AzureEventHubDemo.Function.Listener
 {
-    using AzureEventHubDemo.Writer.Classes;
+    using AzureEventHubDemo.Writer.Models;
     using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Text.Json;
@@ -81,8 +80,8 @@ namespace AzureEventHubDemo.Function.Listener
 
         private static DriverProfile ConvertFromByteArray(EventData eventData)
         {
-            MemoryStream ms = new MemoryStream(eventData.Body.Array);
-            return JsonSerializer.Deserialize<DriverProfile>(ms);
+            var bodyString = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+            return JsonSerializer.Deserialize<DriverProfile>(bodyString);
         }
     }
 }

@@ -7,17 +7,16 @@ namespace AzureEventHubDemo.Writer
 {
     using Azure.Messaging.EventHubs;
     using Azure.Messaging.EventHubs.Producer;
-    using AzureEventHubDemo.Writer.Classes;
+    using AzureEventHubDemo.Writer.Models;
     using System;
-    using System.IO;
-    using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
     public class Program
     {
         // connection string to the Event Hubs namespace
-        private const string connectionString = "<Writer Connection String>";
+        private const string connectionString = "<your key>";
 
         // name of the event hub
         private const string eventHubName = "eventhubkhododemo";
@@ -29,6 +28,7 @@ namespace AzureEventHubDemo.Writer
         // of the application, which is best practice when events are being published or read regularly.
         private static EventHubProducerClient producerClient;
 
+        // https://willvelida.medium.com/building-a-simple-streaming-app-with-azure-cosmos-db-event-hubs-and-azure-functions-3dd033979faf
         public static async Task Main()
         {
             // Create a producer client that you can use to send events to an event hub
@@ -79,6 +79,7 @@ namespace AzureEventHubDemo.Writer
         {
             return new DriverProfile()
             {
+                DriverId = Guid.NewGuid(),
                 Name = Faker.Name.FullName(Faker.NameFormats.StandardWithMiddle),
                 Area = Faker.Country.Name(),
                 Bio = Faker.Lorem.Paragraph(),
@@ -93,12 +94,12 @@ namespace AzureEventHubDemo.Writer
         /// <returns>https://stackoverflow.com/questions/1446547/how-to-convert-an-object-to-a-byte-array-in-c-sharp</returns>
         public static byte[] ObjectToByteArray(Object obj)
         {
-            using (var ms = new MemoryStream())
+            var options = new JsonSerializerOptions
             {
-                var bf = new BinaryFormatter();
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
+                WriteIndented = true,
+            };
+            var json = JsonSerializer.Serialize(obj, options);
+            return Encoding.UTF8.GetBytes(json);
         }
     }
 }
