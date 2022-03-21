@@ -1,0 +1,44 @@
+﻿{
+	"$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+	"settings": {
+		"indentation": {
+			"indentationSize": 4,
+			"tabSize": 4,
+			"useTabs": true
+		},
+		"spacingRules": {
+		},
+		"documentationRules": {
+			"documentExposedElements": true,
+			"documentInterfaces": true,
+			"documentPrivateElements": true,
+			"documentInternalElements": true,
+			"documentPrivateFields": false,
+			"companyName": "Keith D. Hodo"
+		},
+		"readabilityRules": {
+		},
+		"layoutRules": {
+			"newlineAtEndOfFile": "require",
+			"allowConsecutiveUsings": false
+		},
+		"maintainabilityRules": {
+			"topLevelTypes": [
+				"class",
+				"interface",
+				"struct",
+				"enum"
+			]
+		},
+		"namingRules": {
+			"allowCommonHungarianPrefixes": false,
+			"allowedHungarianPrefixes": []
+		},
+		"orderingRules": {
+			"blankLinesBetweenUsingGroups": "allow",
+			"elementOrder": [ "kind" ],
+			"systemUsingDirectivesFirst": false,
+			"usingDirectivesPlacement": "insideNamespace"
+		}
+	}
+}
