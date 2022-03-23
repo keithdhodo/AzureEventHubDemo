@@ -4,9 +4,9 @@
 
 namespace AzureEventHubDemo.Function.Listener
 {
+    using Azure.Messaging.EventHubs;
     using AzureEventHubDemo.Core.Interfaces;
     using AzureEventHubDemo.Writer.Models;
-    using Microsoft.Azure.EventHubs;
     using Microsoft.Azure.Functions.Worker;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
@@ -67,7 +67,7 @@ namespace AzureEventHubDemo.Function.Listener
                 {
                     var driverProfile = ConvertFromByteArray(eventData);
 
-                    log.LogInformation($"Event: {Encoding.UTF8.GetString(eventData.Body)}");
+                    //log.LogInformation($"Event: {Encoding.UTF8.GetString(eventData.Body)}");
                     log.LogInformation($"Driver Id: {driverProfile.DriverId}");
                     log.LogInformation($"Name: {driverProfile.Name}");
                     log.LogInformation($"Area: {driverProfile.Area}");
@@ -76,19 +76,19 @@ namespace AzureEventHubDemo.Function.Listener
                     log.LogInformation($"Count: {driverProfile.Count}");
 
                     // Metadata accessed by binding to EventData
-                    log.LogInformation($"EnqueuedTimeUtc={eventData.SystemProperties.EnqueuedTimeUtc}");
-                    log.LogInformation($"SequenceNumber={eventData.SystemProperties.SequenceNumber}");
-                    log.LogInformation($"Offset={eventData.SystemProperties.Offset}");
+                    // log.LogInformation($"EnqueuedTimeUtc={eventData.SystemProperties.EnqueuedTimeUtc}");
+                    // log.LogInformation($"SequenceNumber={eventData.SystemProperties.SequenceNumber}");
+                    // log.LogInformation($"Offset={eventData.SystemProperties.Offset}");
 
                     // Metadata accessed by using binding expressions in method parameters
                     //log.LogInformation($"EnqueuedTimeUtc={enqueuedTimeUtc}");
                     //log.LogInformation($"SequenceNumber={sequenceNumber}");
                     //log.LogInformation($"Offset={offset}");
 
-                    string messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+                    // string messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
 
                     // Replace these two lines with your processing logic.
-                    log.LogInformation($"C# Event Hub trigger function processed a message: {messageBody}");
+                    // log.LogInformation($"C# Event Hub trigger function processed a message: {messageBody}");
                     await Task.Yield();
                 }
                 catch (Exception e)
@@ -113,7 +113,7 @@ namespace AzureEventHubDemo.Function.Listener
 
         private static DriverProfile ConvertFromByteArray(EventData eventData)
         {
-            var bodyString = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
+            var bodyString = Encoding.UTF8.GetString(eventData.Body.ToArray());
             return JsonSerializer.Deserialize<DriverProfile>(bodyString);
         }
     }

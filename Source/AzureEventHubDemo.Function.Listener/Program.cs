@@ -26,8 +26,8 @@ namespace AzureEventHubDemo.Function.Listener
                     .SetBasePath(currentDirectory)
                     .AddJsonFile("local.appsettings.json", optional: true, reloadOnChange: true)
                     .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-                    .AddEnvironmentVariables())
-                    // .AddKeyVault())
+                    .AddEnvironmentVariables()
+                    .AddKeyVault())
                 // .ConfigureFunctionsWorkerDefaults()
                 .ConfigureServices(services =>
                 {
@@ -44,18 +44,6 @@ namespace AzureEventHubDemo.Function.Listener
                         forecastCache.PopulateCache(weatherForecasts);
                         return forecastCache;
                     });
-                    //services.AddTransient<IServiceWrapper>(sp =>
-                    //{
-                    //    var config = sp.GetService<IConfiguration>();
-                    //    return new ServiceWrapper(new SqlWrapper(config[WebConstants.KEY_VAULT_SQL_CONNECTIONSTRING]));
-                    //});
-                    //services.AddSingleton<IQueueClient>(sp =>
-                    //{
-                    //    var config = sp.GetService<IConfiguration>();
-                    //    return new QueueClient(
-                    //        config[ExtraLifeInboundETL.Constants.KeyVaultConstants.ServiceBusConnectionString],
-                    //        ExtraLifeInboundETL.Constants.ServiceBusConstants.ParticipantsQueue);
-                    //});
                 })
                 .Build();
 
