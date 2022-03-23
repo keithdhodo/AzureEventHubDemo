@@ -4,9 +4,11 @@
 
 namespace AzureEventHubDemo.Function.Listener
 {
+    using AzureEventHubDemo.Core.Interfaces;
     using AzureEventHubDemo.Writer.Models;
     using Microsoft.Azure.EventHubs;
-    using Microsoft.Azure.WebJobs;
+    using Microsoft.Azure.Functions.Worker;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
@@ -17,16 +19,45 @@ namespace AzureEventHubDemo.Function.Listener
 
     public class AzureEventHubTriggerDemo
     {
-        [FunctionName("AzureEventHubTriggerDemo")]
+        private static IConfiguration Configuration;
+        private static string EventHubListenerConnectionString;
+        private static IWeatherForecastService WeatherForecastService;
+        private static IForecastCache forecastCache;
+
+        public AzureEventHubTriggerDemo(
+            IConfiguration configuration,
+            IWeatherForecastService weatherForecastService)
+        {
+            Configuration = configuration;
+
+            if (weatherForecastService == null)
+            {
+                WeatherForecastService = weatherForecastService;
+            }
+
+            if (forecastCache == null || forecastCache.GetCacheCount() == 0)
+            {
+                var weatherForecasts = WeatherForecastService.GetForecasts().Result;
+                forecastCache.PopulateCache(weatherForecasts);
+            }
+
+            if (string.IsNullOrEmpty(EventHubListenerConnectionString))
+            {
+                EventHubListenerConnectionString = Configuration["EventHubListenCS"];
+            }
+        }
+
+        [Function("AzureEventHubTriggerDemo")]
         public static async Task Run(
                 [EventHubTrigger(
             	eventHubName: "eventhubkhododemo",
-            	Connection = "EventHubConnectionAppSetting")]
+            	Connection = "EventHubListenConnectionString")]
                 EventData[] events,
                 //DateTime enqueuedTimeUtc,
                 //long sequenceNumber,
                 //string offset,
-                ILogger log)
+                ILogger log,
+                FunctionContext context)
         {
             var exceptions = new List<Exception>();
 
@@ -37,10 +68,12 @@ namespace AzureEventHubDemo.Function.Listener
                     var driverProfile = ConvertFromByteArray(eventData);
 
                     log.LogInformation($"Event: {Encoding.UTF8.GetString(eventData.Body)}");
+                    log.LogInformation($"Driver Id: {driverProfile.DriverId}");
                     log.LogInformation($"Name: {driverProfile.Name}");
                     log.LogInformation($"Area: {driverProfile.Area}");
                     log.LogInformation($"Bio: {driverProfile.Bio}");
                     log.LogInformation($"Follower Count: {driverProfile.Followers}");
+                    log.LogInformation($"Count: {driverProfile.Count}");
 
                     // Metadata accessed by binding to EventData
                     log.LogInformation($"EnqueuedTimeUtc={eventData.SystemProperties.EnqueuedTimeUtc}");

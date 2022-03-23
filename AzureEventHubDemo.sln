@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Listener"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Writer", "Source\AzureEventHubDemo.Writer\AzureEventHubDemo.Writer.csproj", "{D296F29F-DDA7-43EB-8171-035FD0572654}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureEventHubDemo.Function.Listener", "Source\AzureEventHubDemo.Function.Listener\AzureEventHubDemo.Function.Listener.csproj", "{AA201514-6C8C-4792-8FB3-D49C62C06F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Function.Listener", "Source\AzureEventHubDemo.Function.Listener\AzureEventHubDemo.Function.Listener.csproj", "{AA201514-6C8C-4792-8FB3-D49C62C06F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureEventHubDemo.Core", "Source\AzureEventHubDemo.Core\AzureEventHubDemo.Core.csproj", "{9D2BF6CB-CB7D-44E6-876A-F8B0F0930FF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Core", "Source\AzureEventHubDemo.Core\AzureEventHubDemo.Core.csproj", "{9D2BF6CB-CB7D-44E6-876A-F8B0F0930FF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureEventHubDemo.API", "Source\AzureEventHubDemo.API\AzureEventHubDemo.API.csproj", "{EE177E8B-0DAB-42E1-8231-9D49072C380F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{9D2BF6CB-CB7D-44E6-876A-F8B0F0930FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D2BF6CB-CB7D-44E6-876A-F8B0F0930FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D2BF6CB-CB7D-44E6-876A-F8B0F0930FF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE177E8B-0DAB-42E1-8231-9D49072C380F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE177E8B-0DAB-42E1-8231-9D49072C380F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE177E8B-0DAB-42E1-8231-9D49072C380F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE177E8B-0DAB-42E1-8231-9D49072C380F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
