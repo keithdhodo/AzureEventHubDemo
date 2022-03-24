@@ -12,7 +12,9 @@ namespace AzureEventHubDemo.Core.Models
 
     public class ForecastCache : IForecastCache
     {
-        static MemoryCache WeatherForecasts { get; set; }
+        public static MemoryCache WeatherForecasts { get; set; }
+
+        public static List<Guid> ForecastKeys { get; set; }
 
         public ForecastCache()
         {
@@ -22,6 +24,8 @@ namespace AzureEventHubDemo.Core.Models
             };
 
             WeatherForecasts = new MemoryCache(memoryCacheOptions);
+
+            ForecastKeys = new List<Guid>();
         }
 
         public int GetCacheCount()
@@ -29,8 +33,23 @@ namespace AzureEventHubDemo.Core.Models
             return WeatherForecasts.Count;
         }
 
+        public List<Guid> GetForecastKeys()
+        {
+            return ForecastKeys;
+        }
+
+        public WeatherForecast GetItemFromCache(Guid itemKey)
+        {
+            return WeatherForecasts.Get<WeatherForecast>(itemKey);
+        }
+
         public bool PopulateCache(IEnumerable<WeatherForecast> forecasts)
         {
+            if (ForecastKeys.Count > 0)
+            {
+                ForecastKeys.Clear();
+            }
+
             foreach(var forecast in forecasts)
             {
                 WeatherForecasts.TryGetValue(forecast.ForecastId, out var foundForecast);
@@ -38,6 +57,7 @@ namespace AzureEventHubDemo.Core.Models
                 if (foundForecast == null)
                 {
                     WeatherForecasts.Set(forecast.ForecastId, forecast, DateTimeOffset.UtcNow.AddMinutes(1));
+                    ForecastKeys.Add(forecast.ForecastId);
                 }
             }
 

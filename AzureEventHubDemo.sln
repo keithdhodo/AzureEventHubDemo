@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Core", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.API", "Source\AzureEventHubDemo.API\AzureEventHubDemo.API.csproj", "{EE177E8B-0DAB-42E1-8231-9D49072C380F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureEventHubDemo.Function.Listener", "Source\AzureEventHubDemo.Function.Listener\AzureEventHubDemo.Function.Listener.csproj", "{17E6A023-446B-43CE-907A-E493740B5B37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureEventHubDemo.Function.Listener", "Source\AzureEventHubDemo.Function.Listener\AzureEventHubDemo.Function.Listener.csproj", "{17E6A023-446B-43CE-907A-E493740B5B37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

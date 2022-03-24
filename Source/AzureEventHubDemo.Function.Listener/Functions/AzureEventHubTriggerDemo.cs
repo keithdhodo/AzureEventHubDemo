@@ -12,6 +12,7 @@ namespace AzureEventHubDemo.Function.Listener
     using Microsoft.Extensions.Logging;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Text;
     using System.Text.Json;
@@ -20,26 +21,53 @@ namespace AzureEventHubDemo.Function.Listener
     public class AzureEventHubTriggerDemo
     {
         private static IConfiguration Configuration;
-        private static string EventHubListenerConnectionString;
         private static IWeatherForecastService WeatherForecastService;
         private static IForecastCache ForecastCache;
+
+        private static IList<Guid> ForecastKeys;
+
+        private static string EventHubListenerConnectionString;
+        private static Random random;
+
+        private static int totalEventCount;
+        private static Stopwatch stopwatch;
 
         public AzureEventHubTriggerDemo(
             IConfiguration configuration,
             IWeatherForecastService weatherForecastService,
             IForecastCache forecastCache)
         {
-            Configuration = configuration;
+            if (stopwatch == null)
+            {
+                stopwatch = new Stopwatch();
+            }
 
-            if (weatherForecastService == null)
+            if (Configuration == null)
+            {
+                Configuration = configuration;
+            }
+
+            if (WeatherForecastService == null)
             {
                 WeatherForecastService = weatherForecastService;
             }
 
+            if (ForecastCache == null)
+            {
+                if (ForecastCache == null)
+                {
+                    ForecastCache = forecastCache;
+                }
+            }
+
             if (ForecastCache.GetCacheCount() == 0)
             {
-                var weatherForecasts = WeatherForecastService.GetForecasts().Result;
-                ForecastCache.PopulateCache(weatherForecasts);
+                GetForecastsAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+            }
+
+            if (random == null)
+            {
+                random = new Random();
             }
 
             if (string.IsNullOrEmpty(EventHubListenerConnectionString))
@@ -49,7 +77,7 @@ namespace AzureEventHubDemo.Function.Listener
         }
 
         [FunctionName("AzureEventHubTriggerDemo")]
-        public static async Task Run(
+        public async Task Run(
                 [EventHubTrigger(
             	eventHubName: "eventhubkhododemo",
             	Connection = "EventHubListenConnectionString")]
@@ -60,9 +88,24 @@ namespace AzureEventHubDemo.Function.Listener
                 ILogger log)
         {
             var exceptions = new List<Exception>();
+            stopwatch.Start();
+
+            var randomIndex = random.Next(0, ForecastKeys.Count() - 1);
+            var randomForecast = ForecastCache.GetItemFromCache(ForecastKeys[randomIndex]);
+
+            if (randomForecast == null)
+            {
+                await GetForecastsAsync();
+                randomForecast = ForecastCache.GetItemFromCache(ForecastKeys[randomIndex]);
+            }
+
+            log.LogInformation($"Forecast Id: {randomForecast.ForecastId}");
+            log.LogInformation($"Forecast Date: {randomForecast.Date}");
 
             foreach (EventData eventData in events)
             {
+                totalEventCount++;
+
                 try
                 {
                     var driverProfile = ConvertFromByteArray(eventData);
@@ -74,6 +117,10 @@ namespace AzureEventHubDemo.Function.Listener
                     log.LogInformation($"Bio: {driverProfile.Bio}");
                     log.LogInformation($"Follower Count: {driverProfile.Followers}");
                     log.LogInformation($"Count: {driverProfile.Count}");
+
+                    // log stats
+                    log.LogInformation($"Total Events: {totalEventCount}");
+                    log.LogInformation($"Total Duration (Seconds): {stopwatch.Elapsed.TotalSeconds}");
 
                     // Metadata accessed by binding to EventData
                     // log.LogInformation($"EnqueuedTimeUtc={eventData.SystemProperties.EnqueuedTimeUtc}");
@@ -109,6 +156,17 @@ namespace AzureEventHubDemo.Function.Listener
             {
                 throw exceptions.Single();
             }
+
+            stopwatch.Stop();
+        }
+
+        private static async Task GetForecastsAsync()
+        {
+            ForecastKeys = new List<Guid>();
+
+            var weatherForecasts = await WeatherForecastService.GetForecasts();
+            ForecastCache.PopulateCache(weatherForecasts);
+            ForecastKeys = ForecastCache.GetForecastKeys();
         }
 
         private static DriverProfile ConvertFromByteArray(EventData eventData)
