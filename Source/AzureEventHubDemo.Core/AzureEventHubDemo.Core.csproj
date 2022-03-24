@@ -24,4 +24,8 @@
 		<AdditionalFiles Include="..\..\configuration\stylecop.json" Link="stylecop.json" />
 	</ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="6.0.2" />
+  </ItemGroup>
+
 </Project>
