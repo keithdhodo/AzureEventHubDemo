@@ -7,7 +7,7 @@ namespace AzureEventHubDemo.Function.Listener
     using Azure.Messaging.EventHubs;
     using AzureEventHubDemo.Core.Interfaces;
     using AzureEventHubDemo.Writer.Models;
-    using Microsoft.Azure.Functions.Worker;
+    using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using System;
@@ -22,11 +22,12 @@ namespace AzureEventHubDemo.Function.Listener
         private static IConfiguration Configuration;
         private static string EventHubListenerConnectionString;
         private static IWeatherForecastService WeatherForecastService;
-        private static IForecastCache forecastCache;
+        private static IForecastCache ForecastCache;
 
         public AzureEventHubTriggerDemo(
             IConfiguration configuration,
-            IWeatherForecastService weatherForecastService)
+            IWeatherForecastService weatherForecastService,
+            IForecastCache forecastCache)
         {
             Configuration = configuration;
 
@@ -35,10 +36,10 @@ namespace AzureEventHubDemo.Function.Listener
                 WeatherForecastService = weatherForecastService;
             }
 
-            if (forecastCache == null || forecastCache.GetCacheCount() == 0)
+            if (ForecastCache.GetCacheCount() == 0)
             {
                 var weatherForecasts = WeatherForecastService.GetForecasts().Result;
-                forecastCache.PopulateCache(weatherForecasts);
+                ForecastCache.PopulateCache(weatherForecasts);
             }
 
             if (string.IsNullOrEmpty(EventHubListenerConnectionString))
@@ -47,7 +48,7 @@ namespace AzureEventHubDemo.Function.Listener
             }
         }
 
-        [Function("AzureEventHubTriggerDemo")]
+        [FunctionName("AzureEventHubTriggerDemo")]
         public static async Task Run(
                 [EventHubTrigger(
             	eventHubName: "eventhubkhododemo",
@@ -56,8 +57,7 @@ namespace AzureEventHubDemo.Function.Listener
                 //DateTime enqueuedTimeUtc,
                 //long sequenceNumber,
                 //string offset,
-                ILogger log,
-                FunctionContext context)
+                ILogger log)
         {
             var exceptions = new List<Exception>();
 

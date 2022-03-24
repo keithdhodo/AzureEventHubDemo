@@ -16,7 +16,7 @@ namespace AzureEventHubDemo.Writer
     public class Program
     {
         // connection string to the Event Hubs namespace
-        private const string connectionString = "Endpoint=sb://eventhubkhododemo.servicebus.windows.net/;SharedAccessKeyName=SendPolicy;SharedAccessKey=QfV2ZKub+eptz10Fq1+jZW6B1GDdy715WM+CBecccB0=";
+        private const string connectionString = "<your endpoint>";
 
         // name of the event hub
         private const string eventHubName = "eventhubkhododemo";
